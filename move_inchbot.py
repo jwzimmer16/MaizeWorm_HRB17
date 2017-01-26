@@ -7,6 +7,7 @@ This is a temporary script file.
 
 from joy import *
 
+# !! This is only used to go Forward and then Right using one key !! #
 class MoveUpRight( Plan ):
   """
   ShaveNHaircutPlan shows a simple example of sequential composition:
@@ -81,20 +82,24 @@ class InchMoveApp( JoyApp ):
 if __name__=="__main__":
   robot = None
   scr = None
-  shaveSpec = "#shave "
-  hairSpec = "#haircut "
+  upSpec = "#up "
+  rightSpec = "#right "
+  leftSpec = "#left "
   args = list(sys.argv[1:])
   while args:
     arg = args.pop(0)
     if arg=='--mod-count' or arg=='-c':
       N = int(args.pop(0))
       robot = dict(count=N)
-    elif arg=='--shave' or arg=='-s':
-      shaveSpec = args.pop(0)
-      if shaveSpec[:1]==">": scr = {}
-    elif arg=='--haircut' or arg=='-h':
-      hairSpec = args.pop(0)
-      if hairSpec[:1]==">": scr = {}
+    elif arg=='--up' or arg=='-u':
+      upSpec = args.pop(0)
+      if upSpec[:1]==">": scr = {}
+    elif arg=='--right' or arg=='-r':
+      rightSpec = args.pop(0)
+      if rightSpec[:1]==">": scr = {}
+    elif arg=='--left' or arg=='-l':
+      leftSpec = args.pop(0)
+      if leftSpec[:1]==">": scr = {}
     elif arg=='--help' or arg=='-h':
       sys.stdout.write("""
   Usage: %s [options]
@@ -124,10 +129,12 @@ if __name__=="__main__":
          'Nx3C/@set_pos' -- send to position of CKBot servo module with ID 0x3C
         
         NOTE: to use robot modules you MUST also specify a -c option
+
+    NOTE NOTE: I was too lazy to modify this, use -u, -r, -l for up, right, left commands
         
     """ % sys.argv[0])
       sys.exit(1)
     # ENDS cmdline parsing loop
   
-  app = ShaveNHaircutApp(shaveSpec,hairSpec,robot=robot,scr=scr)
+  app = InchMoveApp(upSpec,rightSpec,leftSpec,robot=robot,scr=scr)
   app.run()
