@@ -6,7 +6,47 @@ This is a temporary script file.
 """
 
 from joy import *
+
+
+class PosablePlan( Plan, PoseRecorder ):
+    def __init__(self,app):
+        Plan.__init__(self,app)
+        PoseRecorder.__init__(app.robot.values())
     
+    def setBehavior(self, period, count, rate, csv ):
+        pass
+    
+    def behavior( self, evt ):
+        """Play back the current recording one or more times.
+
+           INPUT:
+             period -- float / None -- duration for entire recording
+               if period is None, the recording timestamps are used
+             count -- integer -- number of times to play
+             rate -- float -- delay between commands sent (sec)
+            """
+        # playback current pose for a given amount of time and with a given period
+        if not self.plan:
+          raise ValueError("No recording -- .snap() poses first!")
+          return
+        gait = asarray(self.plan,int)
+        gaitfun = interp1d( gait[:,0], gait[:,1:].T ) # Gait interpolater function
+        dur = gait[-1,0]-gait[0,0]
+        if period is None:
+          period = self.plan[-1][0] - self.plan[0][0]
+        t0 = now()
+        t1 = t0
+        while t1-t0 < period*count:
+            t1 = now()
+            phi = (t1-t0)/period
+            phi %= 1.0
+            goal = gaitfun(phi*dur).round()
+            print "\rphi: %.2f: " % phi, " ".join([
+                "%6d" % g for g in goal
+            ])
+            self._set_pose( goal )	
+            yield self.forDuration(rate)
+            
 class InchMoveApp( JoyApp ):
   # Load both patterns from their CSV files
   FORWARD = loadCSV("movements/forward.csv")
