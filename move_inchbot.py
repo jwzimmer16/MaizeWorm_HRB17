@@ -7,7 +7,7 @@ This is a temporary script file.
 
 from joy import *
 
-
+"""
 class PosablePlan( Plan, PoseRecorder ):
     def __init__(self,app):
         Plan.__init__(self,app)
@@ -17,14 +17,14 @@ class PosablePlan( Plan, PoseRecorder ):
         pass
     
     def behavior( self, evt ):
-        """Play back the current recording one or more times.
+        Play back the current recording one or more times.
 
            INPUT:
              period -- float / None -- duration for entire recording
                if period is None, the recording timestamps are used
              count -- integer -- number of times to play
              rate -- float -- delay between commands sent (sec)
-            """
+            
         # playback current pose for a given amount of time and with a given period
         if not self.plan:
           raise ValueError("No recording -- .snap() poses first!")
@@ -46,7 +46,8 @@ class PosablePlan( Plan, PoseRecorder ):
             ])
             self._set_pose( goal )	
             yield self.forDuration(rate)
-            
+"""
+       
 class InchMoveApp( JoyApp ):
   # Load both patterns from their CSV files
   FORWARD = loadCSV("movements/forward.csv")
@@ -84,19 +85,27 @@ class InchMoveApp( JoyApp ):
   def onEvent(self,evt):
     if evt.type != KEYDOWN:
       return
-    # assertion: must be a KEYDOWN event 
+    # assertion: must be a KEYDOWN event
+    currentplan = self.forwardplan
     if evt.key == K_q:
         self.slowleftplan.start()
+	currentplan = self.slowleftplan
     elif evt.key == K_e:
         self.slowrightplan.start()
+	currentplan = self.slowrightplan
     elif evt.key == K_a:
         self.sharpleftplan.start()
+	currentplan = self.sharpleftplan
     elif evt.key == K_d:
         self.slowrightplan.start()
+	currentplan = self.slowrightplan
     elif evt.key == K_w:
         self.forwardplan.start()
+	currentplan = self.forwardplan
     elif evt.key == K_s:
-        self.stop()
+        currentplan.stop()
+    elif evt.key == K_SPACE:
+	self.stop()
 
 if __name__=="__main__":
   robot = None
