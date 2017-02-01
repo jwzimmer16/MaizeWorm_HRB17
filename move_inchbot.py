@@ -97,7 +97,7 @@ class InchMoveApp( JoyApp ):
         self.sharpleftplan.start()
 	currentplan = self.sharpleftplan
     elif evt.key == K_d:
-        self.slowrightplan.start()
+        self.sharprightplan.start()
 	currentplan = self.slowrightplan
     elif evt.key == K_w:
         self.forwardplan.start()
