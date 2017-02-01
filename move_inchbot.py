@@ -51,6 +51,7 @@ class PosablePlan( Plan, PoseRecorder ):
 class InchMoveApp( JoyApp ):
   # Load both patterns from their CSV files
   FORWARD = loadCSV("movements/forward.csv")
+  SMALL_STEP = loadCSV("movements/small_step.csv")
   SHARP_LEFT = loadCSV("movements/sharp_left.csv")
   SLOW_LEFT = loadCSV("movements/slow_left.csv")
   SHARP_RIGHT = loadCSV("movements/sharp_right.csv")
@@ -78,9 +79,14 @@ class InchMoveApp( JoyApp ):
     self.sharprightplan.onStop = lambda : progress("Sharp Right: done") 
 
     self.forwardplan = SheetPlan(self, self.FORWARD) 
-    self.forwardplan.setRate(1)
+    self.forwardplan.setRate(2)
     self.forwardplan.onStart = lambda : progress("Forward: starting") 
     self.forwardplan.onStop = lambda : progress("Forward: done")  
+
+    self.smallstepplan = SheetPlan(self, self.SMALL_STEP) 
+    self.smallstepplan.setRate(1)
+    self.smallstepplan.onStart = lambda : progress("Small Step: starting") 
+    self.smallstepplan.onStop = lambda : progress("Small Step: done")  
 
   def onEvent(self,evt):
     if evt.type != KEYDOWN:
@@ -102,6 +108,9 @@ class InchMoveApp( JoyApp ):
     elif evt.key == K_w:
         self.forwardplan.start()
 	currentplan = self.forwardplan
+    elif evt.key == K_z:
+        self.smallstepplan.start()
+	currentplan = self.smallstepplan
     elif evt.key == K_s:
         currentplan.stop()
     elif evt.key == K_SPACE:
